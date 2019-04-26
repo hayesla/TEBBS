@@ -251,9 +251,9 @@ def test_t_em_initials(temp, temp_ext, em, em_ext, labelgrid):
 def error_range(inputarray,labelgrid):
     cparray = numpy.copy(inputarray)
     # pushing first 1/6 and last 1/10 cparray values to zero
-    for i in range (0,cparray.shape[0]/6,1):
+    for i in range (0,int(cparray.shape[0]/6),1):
         cparray[i,:,:] *= 0.0
-    for i in range (9*cparray.shape[0]/10,cparray.shape[0],1):
+    for i in range (int(9*cparray.shape[0]/10),int(cparray.shape[0]),1):
         cparray[i,:,:] *= 0.0
     maxarray = numpy.amax(cparray, axis = 0)
     maxvalue = numpy.amax(maxarray[numpy.where(labelgrid == 1)])
@@ -334,7 +334,7 @@ def correct_flux(fluxes):
 
 # apply Savitzky-Golay smoothing if selected
 def sgsmooth_flux(fluxes, gver):
-    if (gver <= '12'):
+    if (gver <= 12):
         window_size = 11
     else:
         window_size = 15
@@ -387,7 +387,7 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
     if (savitzky_golay == 1): fluxes = sgsmooth_flux(fluxes, gver)
     flare_peak_time = find_max_sec(timing, fluxes, flare_start_time, flare_end_time)
     if ((int(flare_peak_time) == 0) or (int(flare_peak_time) == int(flare_start_time))):
-        print "The timing is incorrect. Interrupting run for the current flare..."
+        print("The timing is incorrect. Interrupting run for the current flare...")
         return 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0
     Amin, Bmin = extract_min(timing, flare_start_time, flare_peak_time, fluxes)
     bgrid = make_grid(Amin, Bmin)
@@ -441,15 +441,15 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
     
     # calculating parameters
     if (extend_50 == 0):
-        Tmax = numpy.amax(plot_temp[5*plot_temp.shape[0]/36:5*plot_temp.shape[0]/6,ibest,jbest])
-        EMmax = numpy.amax(plot_em[5*plot_em.shape[0]/36:5*plot_em.shape[0]/6,ibest,jbest])
-        Tmax_time = ftiming_ext[5*plot_temp.shape[0]/36 + numpy.argmax(plot_temp[5*plot_temp.shape[0]/36:5*plot_temp.shape[0]/6,ibest,jbest])]
-        EMmax_time = ftiming_ext[5*plot_temp.shape[0]/36 + numpy.argmax(plot_em[5*plot_em.shape[0]/36:5*plot_em.shape[0]/6,ibest,jbest])]
+        Tmax = numpy.amax(plot_temp[int(5*plot_temp.shape[0]/36):int(5*plot_temp.shape[0]/6),ibest,jbest])
+        EMmax = numpy.amax(plot_em[int(5*plot_em.shape[0]/36):int(5*plot_em.shape[0]/6),ibest,jbest])
+        Tmax_time = ftiming_ext[int(5*plot_temp.shape[0]/36 + numpy.argmax(plot_temp[int(5*plot_temp.shape[0]/36):int(5*plot_temp.shape[0]/6),  ibest,jbest]))]
+        EMmax_time = ftiming_ext[int(5*plot_temp.shape[0]/36 + numpy.argmax(plot_em[int(5*plot_em.shape[0]/36):int(5*plot_em.shape[0]/6), ibest,jbest]))]
     else:
-        Tmax = numpy.amax(plot_temp[plot_temp.shape[0]/9:2*plot_temp.shape[0]/3,ibest,jbest])
-        EMmax = numpy.amax(plot_em[plot_em.shape[0]/9:2*plot_em.shape[0]/3,ibest,jbest])
-        Tmax_time = ftiming_ext[plot_temp.shape[0]/9 + numpy.argmax(plot_temp[plot_temp.shape[0]/9:2*plot_temp.shape[0]/3,ibest,jbest])]
-        EMmax_time = ftiming_ext[plot_temp.shape[0]/9 + numpy.argmax(plot_em[plot_em.shape[0]/9:2*plot_em.shape[0]/3,ibest,jbest])]
+        Tmax = numpy.amax(plot_temp[int(plot_temp.shape[0]/9):int(2*plot_temp.shape[0]/3),ibest,jbest])
+        EMmax = numpy.amax(plot_em[int(plot_em.shape[0]/9):int(2*plot_em.shape[0]/3),ibest,jbest])
+        Tmax_time = ftiming_ext[int(plot_temp.shape[0]/9 + numpy.argmax(plot_temp[int(plot_temp.shape[0]/9):int(2*plot_temp.shape[0]/3),ibest,jbest]))]
+        EMmax_time = ftiming_ext[int(plot_temp.shape[0]/9 + numpy.argmax(plot_em[int(plot_em.shape[0]/9):int(2*plot_em.shape[0]/3),ibest,jbest]))]
     # converting the times for flares
     ftiming_ext = converttime_sec_string(ftiming_ext,start_time)
     Tmax_time = converttime_sec_string(Tmax_time, start_time)
@@ -461,16 +461,14 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
     # Figuring out the peaks and the peak times of the fluxes
     if (extend_50 == 0):
         flxlength = len(numpy.copy(fluxes_out[:,0]))
-        AFluxMax = numpy.amax(numpy.copy(fluxes_out[5*flxlength/36:5*flxlength/6,0]))
-        BFluxMax = numpy.amax(numpy.copy(fluxes_out[5*flxlength/36:5*flxlength/6,1]))
-        AFluxTime = ftiming_ext[5*flxlength/36 + numpy.argmax(numpy.copy(fluxes_out[5*flxlength/36:5*flxlength/6,0]))]
-        BFluxTime = ftiming_ext[5*flxlength/36 + numpy.argmax(numpy.copy(fluxes_out[5*flxlength/36:5*flxlength/6,1]))]
+        AFluxMax = numpy.amax(numpy.copy(fluxes_out[int(5*flxlength/36):int(5*flxlength/6),0]))
+        BFluxMax = numpy.amax(numpy.copy(fluxes_out[int(5*flxlength/36):int(5*flxlength/6),1]))
+        AFluxTime = ftiming_ext[int(5*flxlength/36 + numpy.argmax(numpy.copy(fluxes_out[int(5*flxlength/36):int(5*flxlength/6),0])))]
+        BFluxTime = ftiming_ext[int(5*flxlength/36 + numpy.argmax(numpy.copy(fluxes_out[int(5*flxlength/36):int(5*flxlength/6),1])))]
     else:
         flxlength = len(numpy.copy(fluxes_out[:,0]))
-        AFluxMax = numpy.amax(numpy.copy(fluxes_out[flxlength/9:2*flxlength/3,0]))
-        BFluxMax = numpy.amax(numpy.copy(fluxes_out[flxlength/9:2*flxlength/3,1]))
-        AFluxTime = ftiming_ext[flxlength/9 + numpy.argmax(numpy.copy(fluxes_out[flxlength/9:2*flxlength/3,0]))]
-        BFluxTime = ftiming_ext[flxlength/9 + numpy.argmax(numpy.copy(fluxes_out[flxlength/9:2*flxlength/3,1]))]
+        AFluxMax = numpy.amax(numpy.copy(fluxes_out[int(flxlength/9):int(2*flxlength/3),0]))
+        BFluxMax = numpy.amax(numpy.copy(fluxes_out[int(flxlength/9):int(2*flxlength/3),1]))
+        AFluxTime = ftiming_ext[int(flxlength/9 + numpy.argmax(numpy.copy(fluxes_out[int(flxlength/9):int(2*flxlength/3),0])))]
+        BFluxTime = ftiming_ext[int(flxlength/9 + numpy.argmax(numpy.copy(fluxes_out[int(flxlength/9):int(2*flxlength/3),1])))]
     return fluxes_out, T_out, EM_out, ftiming_ext, AFluxMax, AFluxTime, BFluxMax, BFluxTime, Tmax, temp_errmin, temp_errmax, Tmax_time, EMmax, em_errmin, em_errmax, EMmax_time, temperature_min_flag, initials_flag, rising_phase_bins
-    
-    
