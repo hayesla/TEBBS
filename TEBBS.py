@@ -14,7 +14,7 @@ def read_t_denom_file(gver):
     str_gver = str(gver)
     if (len(str_gver) < 2): str_gver = '0'+str_gver
     # opening temp-denom file
-    fcur = open('temperature_denom_g'+str_gver+'.txt')
+    fcur = open('/Users/laurahayes/QPP/stats_study/TEBBS/temperature_denom_g'+str_gver+'.txt')
     # finding number of strings in the file
     t_denom = []
     for line in fcur:
@@ -30,7 +30,7 @@ def read_ratio_t_file(gver):
     str_gver = str(gver)
     if (len(str_gver) < 2): str_gver = '0'+str_gver
     # opening temp-denom file
-    fcur = open('temperature_ratio_g'+str_gver+'.txt')
+    fcur = open('/Users/laurahayes/QPP/stats_study/TEBBS/temperature_ratio_g'+str_gver+'.txt')
     # finding number of strings in the file
     ratio_t = []
     for line in fcur:
@@ -298,7 +298,7 @@ def find_goesfile(time):
     if check_url('http://umbra.nascom.nasa.gov/goes/fits/'+year+'/go14'+file_postfix+'.fits') == True : gver = '14'
     if check_url('http://umbra.nascom.nasa.gov/goes/fits/'+year+'/go15'+file_postfix+'.fits') == True : gver = '15'
     filename = 'http://umbra.nascom.nasa.gov/goes/fits/'+year+'/go'+gver+file_postfix+'.fits'
-    filename_short = './goes_rawdata/go'+gver+file_postfix+'.fits'
+    filename_short = '/Users/laurahayes/QPP/stats_study/TEBBS/goes_rawdata/go'+gver+file_postfix+'.fits'
     return int(gver), filename, filename_short
 
 
@@ -355,7 +355,7 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
         if (gver == 0): sys.exit("The corresponding GOES file was not found")
         if (os.path.isfile(goesfile_short) == False):
             ftemp = wget.download(goesfile)
-            shutil.move(ftemp, './goes_rawdata/')
+            shutil.move(ftemp, '/Users/laurahayes/QPP/stats_study/TEBBS/goes_rawdata/')
         timing, fluxes = read_flux(goesfile_short)
         flare_start_time = return_sec(start_time)
         flare_end_time = return_sec(end_time)
@@ -369,10 +369,10 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
         gver = gver1    # otherwise we've exit from the program
         if (os.path.isfile(goesfile_short1) == False):
             ftemp = wget.download(goesfile1)
-            shutil.move(ftemp, './goes_rawdata/')
+            shutil.move(ftemp, '/Users/laurahayes/QPP/stats_study/TEBBS/goes_rawdata/')
         if (os.path.isfile(goesfile_short2) == False):
             ftemp = wget.download(goesfile2)
-            shutil.move(ftemp, './goes_rawdata/')
+            shutil.move(ftemp, '/Users/laurahayes/QPP/stats_study/TEBBS/goes_rawdata/')
         timing1, fluxes1 = read_flux(goesfile_short1)
         timing2, fluxes2 = read_flux(goesfile_short2)
         timing2 += 86400.0
@@ -418,6 +418,9 @@ def TEBBS_calculate(start_time, end_time, plot_key = 0, sys_win = 0, savitzky_go
     
     if (sum(sum(labelgrid)) == 1):
         ibest,jbest = numpy.where(labelgrid == 1)
+        ibest = numpy.squeeze(ibest)
+        jbest = numpy.squeeze(jbest)
+
     else:
         ibest,jbest = best_curve_indeces(temp_maxarray, em_maxarray, labelgrid)
     
